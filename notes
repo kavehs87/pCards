@@ -1,0 +1,10 @@
+game =>
+    create game
+    add players
+    play turn order (1st player,2nd player,etc.)
+    play picks card(s)
+    calculate ladder
+    haveWinner
+    IsDeckEmpty
+    Shuffle New Deck
+    remove lost players
