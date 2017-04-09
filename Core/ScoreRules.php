@@ -46,7 +46,7 @@ class ScoreRules
     protected function checkSimilarity()
     {
         $hand = $this->_player->getHandState();
-        var_dump($hand);
+//        var_dump($hand);
         $cards = Helper::handToCards($hand);
         $nextLevels = [];
         foreach ($cards as $card) {
@@ -75,11 +75,11 @@ class ScoreRules
             }
 
         }
-        echo '************* Matches **************' . PHP_EOL;
-        var_dump($matches);
-        echo '************* Digits **************' . PHP_EOL;
-        var_dump($nextLevels);
-        die();
+//        echo '************* Matches **************' . PHP_EOL;
+//        var_dump($matches);
+//        echo '************* Digits **************' . PHP_EOL;
+//        var_dump($nextLevels);
+//        die();
     }
 
 }
