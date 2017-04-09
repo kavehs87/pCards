@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+<style>
+    .columns {
+        height: 30%;
+    }
+
+    .playerTurn {
+        color: #01a201;
+        text-decoration: underline;
+    }
+
+    .playerTurn:after {
+        content: "'s Turn";
+    }
+
+    .loading {
+        display: none;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 700;
+        margin: 20px auto 20px auto
+    }
+
+    .loading span {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 20px auto 20px auto
+    }
+
+    .gameTable {
+        text-align: center;
+    }
+
+    body {
+        margin: 0 2% 0 2%;
+        background-color: aliceblue;
+    }
+
+    img.card {
+        width: 60px;
+        height: 80px;
+        margin-right: 10px;;
+    }
+
+    img.bg {
+        cursor: pointer;
+    }
+
+    img.clicked {
+        position: relative;
+        top: -10px;
+        border: 2px dotted green;
+        border-radius: 5px;
+    }
+</style>
+<body>
+
+<div class="loading">
+    <span>
+        Loading...
+    </span>
+</div>
+
+<div class="gameTable">
+    <div class="columns" id="player1">
+        <h2>Player 1
+            <span class="name"></span>
+        </h2>
+
+        <div class="cards"></div>
+    </div>
+    <div class="columns" id="player2">
+        <h2>Player 2
+            <span class="name"></span>
+        </h2>
+
+        <div class="cards"></div>
+    </div>
+
+    <!--FLOP-->
+    <div class="columns" id="flop">
+        <h2>Flop</h2>
+        <img src="../Assets/images/bg.jpg" class="card bg">
+
+    </div>
+</div>
+
+<script>
+    var appUrl = 'http://localhost:8000/app/sample/index.php';
+    var imageUrl = 'http://localhost:8000/resources/images/';
+    var state = {};
+    $(document).ready(function () {
+        getState();
+
+
+        $("body").on('click', 'img.card', function () {
+            $("img.card").each(function (){
+                $(this).removeClass('clicked');
+            });
+            $(this).toggleClass('clicked');
+        })
+    });
+
+    function setFlop(state) {
+        var card = imageUrl + state.flop[0] + '.png';
+        $("<img src=\"" + card + "\" class=\"card\">").insertAfter($("#flop").find('img:eq(0)'));
+    }
+
+    function setPlayers(state) {
+        $.each(state.players, function (i, element) {
+            $.each(this.cards, function (j, el) {
+                if ((i + 1) == 1) {
+                    $("#player1 div.cards").append('<img src=" ' + imageUrl + el + '.png' + '"  class="card">');
+                    $("#player1 > h2 span").text(element.name);
+                    if (element.name == state.turn) {
+                        $("#player1 > h2 span").addClass('playerTurn');
+                    }
+                }
+                if ((i + 1) == 2) {
+                    $("#player2 div.cards").append('<img src=" ' + imageUrl + el + '.png' + '"  class="card">');
+                    $("#player2 > h2 span").text(element.name);
+                    if (element.name == state.turn) {
+                        $("#player2 > h2 span").addClass('playerTurn');
+                    }
+                }
+            });
+        });
+    }
+
+    function getState() {
+        $(".loading").show();
+        $.ajax({
+            type: 'POST',
+            url: appUrl,
+            data: '{"request":"state"}', // or JSON.stringify ({"request":"state"}),
+            success: function (data) {
+                $(".loading").hide();
+                setFlop(data);
+                setPlayers(data)
+                console.log(data);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                alert(thrownError);
+                $(".loading").hide();
+            },
+            contentType: "application/json",
+            dataType: 'json'
+        });
+    }
+
+</script>
+</body>
+</html>
